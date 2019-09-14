@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 
 @app.route('/search4', methods=['POST'])
-def do_search() -> str:
+def do_search() -> 'html':
     phrase = request.form['phrase']
     letters = request.form['letters']
     results = str(search_4_letters(phrase, letters))
