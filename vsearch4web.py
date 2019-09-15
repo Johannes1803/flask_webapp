@@ -5,14 +5,11 @@ app = Flask(__name__)
 
 
 def log_request(req: 'flask_request', res: str) -> None:
-    """Write the request and the results returned by search_4_letters to a log file.
+    """Write the request and the results returned by
+       search_4_letters to a log file.
     """
     with open('vsearch.log', 'a') as log:
-        print(req.form, file=log, end='|')
-        print(req.remote_addr, file=log, end='|')
-        print(req.user_agent, file=log, end='|')
-        print(res, file=log, end='\n')
-        print()
+        print(req.form, req.remote_addr, req.user_agent, res, file=log, sep='|')
 
 @app.route('/search4', methods=['POST'])
 def do_search() -> 'html':
@@ -47,10 +44,21 @@ def entry_page() -> 'html':
 
 
 @app.route('/viewlog')
-def view_the_log() -> str:
+def view_the_log() -> 'html':
+    """Display the request data in a human readable htm table.  """
     with open('vsearch.log') as log:
-        contents = log.read()
-    return escape(contents)
+        contents = []
+        for line in log:
+            contents.append([])
+            for item in line.split('|'):
+                contents[-1].append(escape(item))
+    titles = ('FormData', 'Remote_addr', 'User_agent', 'Results')
+    return render_template(
+                    'viewlog.html',
+                    the_title='View Log',
+                    the_row_titles=titles,
+                    the_data=contents
+                    )
 
 
 if __name__ == '__main__':
