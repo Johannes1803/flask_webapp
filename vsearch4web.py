@@ -4,6 +4,11 @@ from vsearch import search_4_letters
 app = Flask(__name__)
 
 
+def log_request(req: 'flask_request', res: str) -> None:
+    with open('vsearch.log', 'a') as log:
+        print(req, res, file=log)
+
+
 @app.route('/search4', methods=['POST'])
 def do_search() -> 'html':
     phrase = request.form['phrase']
