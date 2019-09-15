@@ -8,8 +8,11 @@ def log_request(req: 'flask_request', res: str) -> None:
     """Write the request and the results returned by search_4_letters to a log file.
     """
     with open('vsearch.log', 'a') as log:
-        print(str(dir(req)), res, file=log)
-
+        print(req.form, file=log, end='|')
+        print(req.remote_addr, file=log, end='|')
+        print(req.user_agent, file=log, end='|')
+        print(res, file=log, end='\n')
+        print()
 
 @app.route('/search4', methods=['POST'])
 def do_search() -> 'html':
@@ -41,6 +44,7 @@ def entry_page() -> 'html':
     return render_template(
                         'entry.html',
                         the_title='Welcome to search 4 letters on the web!')
+
 
 @app.route('/viewlog')
 def view_the_log() -> str:
