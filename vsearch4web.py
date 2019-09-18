@@ -1,36 +1,31 @@
 from flask import Flask, render_template, request, escape
 from vsearch import search_4_letters
-import mysql.connector
-
+from DBcm import UseDatabase
 
 app = Flask(__name__)
+
+app.config['dbconfig'] = {'host': '127.0.0.1',
+                          'user': 'vsearch',
+                          'password': 'quakA!',
+                          'database': 'vsearchlogDB', }
 
 
 def log_request(req: 'flask_request', res: str) -> None:
     """Write the request and the results returned by
        search_4_letters to a mysql database.
     """
-    dbconfig = {'host': '127.0.0.1',
-                'user': 'vsearch',
-                'password': 'quakA!',
-                'database': 'vsearchlogDB', }
-
-    conn = mysql.connector.connect(**dbconfig)
-    cursor = conn.cursor()
-
-    sql = """
-            insert into log
-            (phrase, letters, ip, browser_string, results)
-            values
-            (%s, %s, %s, %s, %s)"""
-    sql_tuple = (req.form['phrase'], req.form['letters'],
-                 req.remote_addr, req.user_agent.browser, res, )
-
-    cursor.execute(sql, sql_tuple)
-
-    conn.commit()
-    cursor.close()
-    conn.close()
+    with UseDatabase(app.config['dbconfig']) as cursor:
+        # the string representing the sql query
+        sql = """
+                insert into log
+                (phrase, letters, ip, browser_string, results)
+                values
+                (%s, %s, %s, %s, %s)"""
+        # the values substituted into the query string
+        sql_tuple = (req.form['phrase'], req.form['letters'],
+                     req.remote_addr, req.user_agent.browser, res, )
+        # perform query
+        cursor.execute(sql, sql_tuple)
 
 
 @app.route('/search4', methods=['POST'])
@@ -70,14 +65,16 @@ def entry_page() -> 'html':
 
 @app.route('/viewlog')
 def view_the_log() -> 'html':
-    """Display the request data in a human readable htm table.  """
-    with open('vsearch.log') as log:
-        contents = []
-        for line in log:
-            contents.append([])
-            for item in line.split('|'):
-                contents[-1].append(escape(item))
-    titles = ('FormData', 'Remote_addr', 'User_agent', 'Results')
+    """Display the request data in a human readable html table."""
+    with UseDatabase(app.config['dbconfig']) as cursor:
+        sql = """select phrase, letters, ip, browser_string, results
+        from log
+        """
+        # contents is a list of tuples
+        cursor.execute(sql)
+        contents = cursor.fetchall()
+
+    titles = ('Phrase','Letters', 'Remote_addr', 'User_agent', 'Results')
     return render_template(
         'viewlog.html',
         the_title='View Log',
