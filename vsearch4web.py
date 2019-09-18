@@ -18,16 +18,15 @@ def log_request(req: 'flask_request', res: str) -> None:
     conn = mysql.connector.connect(**dbconfig)
     cursor = conn.cursor()
 
-    _SQL = """
+    sql = """
             insert into log
             (phrase, letters, ip, browser_string, results)
             values
             (%s, %s, %s, %s, %s)"""
-    cursor.execute(_SQL, (req.form['phrase'],
-                          req.form['letters'],
-                          req.remote_addr,
-                          req.user_agent.browser,
-                          res, ))
+    sql_tuple = (req.form['phrase'], req.form['letters'],
+                 req.remote_addr, req.user_agent.browser, res, )
+
+    cursor.execute(sql, sql_tuple)
 
     conn.commit()
     cursor.close()
