@@ -3,7 +3,7 @@ The UseDatabase context manager for working with MySQL.
 
 Simple example usage:
 
-    from DBcm import UseDatabase, SQLError
+    from db_cm import UseDatabase, SQLError
 
     config = { 'host': '127.0.0.1',
                'user': 'myUserid',

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, escape
 from vsearch import search_4_letters
-from DBcm import UseDatabase
+from db_cm import UseDatabase
 
 app = Flask(__name__)
 
@@ -73,8 +73,10 @@ def view_the_log() -> 'html':
         # contents is a list of tuples
         cursor.execute(sql)
         contents = cursor.fetchall()
+        # contents_escaped = [[escape(entry) for entry in tuple]
+        #                    for tuple in contents]
 
-    titles = ('Phrase','Letters', 'Remote_addr', 'User_agent', 'Results')
+    titles = ('Phrase', 'Letters', 'Remote_addr', 'User_agent', 'Results', )
     return render_template(
         'viewlog.html',
         the_title='View Log',
