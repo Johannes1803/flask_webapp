@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, escape
+from flask import Flask, render_template, request, escape, session
 from vsearch import search_4_letters
 from db_cm import UseDatabase
+from checker import check_logged_in
 
 app = Flask(__name__)
+app.secret_key = "astaLaOsoBebe49!"
 
 app.config['dbconfig'] = {'host': '127.0.0.1',
                           'user': 'vsearch',
@@ -18,7 +20,7 @@ def log_request(req: 'flask_request', res: str) -> None:
         # the string representing the sql query
         sql = """
                 insert into log
-                (phrase, letters, ip, browser_string, results)
+                (phrase, letters, ip, browser_st@check_logged_inring, results)
                 values
                 (%s, %s, %s, %s, %s)"""
         # the values substituted into the query string
@@ -34,7 +36,7 @@ def do_search() -> 'html':
 
     The user enters letters to look for and the phrase to be searched.
     Use data from request, compute the result in search_4_results and
-    render results ons screen.
+    render results on screen.
     """
     title = 'Your search results!'
     phrase = request.form['phrase']
@@ -64,6 +66,7 @@ def entry_page() -> 'html':
 
 
 @app.route('/viewlog')
+@check_logged_in
 def view_the_log() -> 'html':
     """Display the request data in a human readable html table."""
     with UseDatabase(app.config['dbconfig']) as cursor:
@@ -82,6 +85,18 @@ def view_the_log() -> 'html':
         the_title='View Log',
         the_row_titles=titles,
         the_data=contents)
+
+
+@app.route('/login')
+def do_login() -> str:
+    session['logged_in'] = True
+    return 'You are now logged in.'
+
+
+@app.route('/logout')
+def do_logout() -> str:
+    session.pop('logged_in')
+    return 'You are now logged out.'
 
 
 if __name__ == '__main__':
