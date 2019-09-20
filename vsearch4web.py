@@ -1,7 +1,9 @@
+from time import sleep
 from flask import Flask, render_template, request, escape, session
 from vsearch import search_4_letters
 from db_cm import UseDatabase
 from checker import check_logged_in
+
 
 app = Flask(__name__)
 app.secret_key = "astaLaOsoBebe49!"
@@ -16,6 +18,7 @@ def log_request(req: 'flask_request', res: str) -> None:
     """Write the request and the results returned by
        search_4_letters to a mysql database.
     """
+    sleep(15)  # line mimicks delay of database
     with UseDatabase(app.config['dbconfig']) as cursor:
         # the string representing the sql query
         sql = """
