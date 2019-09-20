@@ -20,7 +20,7 @@ def log_request(req: 'flask_request', res: str) -> None:
         # the string representing the sql query
         sql = """
                 insert into log
-                (phrase, letters, ip, browser_st@check_logged_inring, results)
+                (phrase, letters, ip, browser_string, results)
                 values
                 (%s, %s, %s, %s, %s)"""
         # the values substituted into the query string
