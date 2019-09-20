@@ -18,7 +18,7 @@ def log_request(req: 'flask_request', res: str) -> None:
     """Write the request and the results returned by
        search_4_letters to a mysql database.
     """
-    sleep(15)  # line mimicks delay of database
+    #  sleep(15)  # line mimicks delay of database
     with UseDatabase(app.config['dbconfig']) as cursor:
         # the string representing the sql query
         sql = """
@@ -45,7 +45,10 @@ def do_search() -> 'html':
     phrase = request.form['phrase']
     letters = request.form['letters']
     results = str(search_4_letters(phrase, letters))
-    log_request(request, results)
+    try:
+        log_request(request, results)
+    except Exception as err:
+        print('****** Logging failed with this error: ', str(err))
     rendered = render_template(
         'results.html',
         the_title=title,
