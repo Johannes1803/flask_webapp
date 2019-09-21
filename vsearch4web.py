@@ -1,7 +1,7 @@
 from time import sleep
 from flask import Flask, render_template, request, escape, session
 from vsearch import search_4_letters
-from db_cm import UseDatabase
+from db_cm import UseDatabase, ConnectionError
 from checker import check_logged_in
 
 
@@ -75,22 +75,28 @@ def entry_page() -> 'html':
 @check_logged_in
 def view_the_log() -> 'html':
     """Display the request data in a human readable html table."""
-    with UseDatabase(app.config['dbconfig']) as cursor:
-        sql = """select phrase, letters, ip, browser_string, results
-        from log
-        """
-        # contents is a list of tuples
-        cursor.execute(sql)
-        contents = cursor.fetchall()
-        # contents_escaped = [[escape(entry) for entry in tuple]
-        #                    for tuple in contents]
+    try:
+        with UseDatabase(app.config['dbconfig']) as cursor:
+            sql = """select phrase, letters, ip, browser_string, results
+            from log
+            """
+            # contents is a list of tuples
+            cursor.execute(sql)
+            contents = cursor.fetchall()
+            # contents_escaped = [[escape(entry) for entry in tuple]
+            #                    for tuple in contents]
 
-    titles = ('Phrase', 'Letters', 'Remote_addr', 'User_agent', 'Results', )
-    return render_template(
-        'viewlog.html',
-        the_title='View Log',
-        the_row_titles=titles,
-        the_data=contents)
+        titles = ('Phrase', 'Letters', 'Remote_addr', 'User_agent', 'Results', )
+        return render_template(
+            'viewlog.html',
+            the_title='View Log',
+            the_row_titles=titles,
+            the_data=contents)
+    except ConnectionError as err:
+        print('Database switched on? Err: ', str(err))
+    except Exception as err:
+        print('Sth went wrong.', str(err))
+    return 'Error'
 
 
 @app.route('/login')
