@@ -6,7 +6,9 @@ Store requests in a databse and render as human-readable html.
 How to invoke:
     >>>> python vsearch4web.py
 """
-from flask import Flask, render_template, request, session
+from time import sleep
+from threading import Thread
+from flask import Flask, render_template, request, session, copy_current_request_context
 from vsearch import search_4_letters
 from db_cm import UseDatabase, ConnectionError, CredentialsError, SQLError
 from checker import check_logged_in
@@ -21,25 +23,6 @@ app.config['dbconfig'] = {'host': '127.0.0.1',
                           'database': 'vsearchlogDB', }
 
 
-def log_request(req: 'flask_request', res: str) -> None:
-    """Write the request and the results returned by
-       search_4_letters to a mysql database.
-    """
-    #  sleep(15)  # line mimicks delay of database
-    with UseDatabase(app.config['dbconfig']) as cursor:
-        # the string representing the sql query
-        sql = """
-                insert into log
-                (phrase, letters, ip, browser_string, results)
-                values
-                (%s, %s, %s, %s, %s)"""
-        # the values substituted into the query string
-        sql_tuple = (req.form['phrase'], req.form['letters'],
-                     req.remote_addr, req.user_agent.browser, res, )
-        # perform query
-        cursor.execute(sql, sql_tuple)
-
-
 @app.route('/search4', methods=['POST'])
 def do_search() -> 'html':
     """Perform search for letters in phrase and render results on screen.
@@ -50,12 +33,31 @@ def do_search() -> 'html':
     Catch various likely errors and log them in the terminal. Hide scary error
     messages from user.
     """
+    @copy_current_request_context
+    def log_request(req: 'flask_request', res: str) -> None:
+        """Write the request and the results returned by
+           search_4_letters to a mysql database.
+        """
+        sleep(15)  # line mimicks delay of database
+        with UseDatabase(app.config['dbconfig']) as cursor:
+            # the string representing the sql query
+            sql = """
+                    insert into log
+                    (phrase, letters, ip, browser_string, results)
+                    values
+                    (%s, %s, %s, %s, %s)"""
+            # the values substituted into the query string
+            sql_tuple = (req.form['phrase'], req.form['letters'],
+                         req.remote_addr, req.user_agent.browser, res, )
+            # perform query
+            cursor.execute(sql, sql_tuple)
     title = 'Your search results!'
     phrase = request.form['phrase']
     letters = request.form['letters']
     results = str(search_4_letters(phrase, letters))
     try:
-        log_request(request, results)
+        t = Thread(target=log_request, args=(request, results))
+        t.start()
     except ConnectionError as err:
         print('Database switched on? Err: ', str(err))
     except CredentialsError as err:
