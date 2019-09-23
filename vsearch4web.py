@@ -1,7 +1,7 @@
 from time import sleep
 from flask import Flask, render_template, request, escape, session
 from vsearch import search_4_letters
-from db_cm import UseDatabase, ConnectionError
+from db_cm import UseDatabase, ConnectionError, CredentialsError, SQLError
 from checker import check_logged_in
 
 
@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.secret_key = "astaLaOsoBebe49!"
 
 app.config['dbconfig'] = {'host': '127.0.0.1',
-                          'user': 'vsearch',
+                          'user': 'vsearchQQQ',
                           'password': 'quakA!',
                           'database': 'vsearchlogDB', }
 
@@ -86,14 +86,17 @@ def view_the_log() -> 'html':
             # contents_escaped = [[escape(entry) for entry in tuple]
             #                    for tuple in contents]
 
-        titles = ('Phrase', 'Letters', 'Remote_addr', 'User_agent', 'Results', )
+        titles = ('Phrase', 'Letters', 'Remote_addr', 'User_agent', 'Results')
         return render_template(
             'viewlog.html',
             the_title='View Log',
             the_row_titles=titles,
             the_data=contents)
+
     except ConnectionError as err:
         print('Database switched on? Err: ', str(err))
+    except CredentialsError as err:
+        print('Password and/ or username seem to be incorrect.', str(err))
     except Exception as err:
         print('Sth went wrong.', str(err))
     return 'Error'
