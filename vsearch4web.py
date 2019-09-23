@@ -8,7 +8,8 @@ How to invoke:
 """
 from time import sleep
 from threading import Thread
-from flask import Flask, render_template, request, session, copy_current_request_context
+from flask import Flask, render_template, request, session
+from flask import copy_current_request_context
 from vsearch import search_4_letters
 from db_cm import UseDatabase, ConnectionError, CredentialsError, SQLError
 from checker import check_logged_in
@@ -18,7 +19,7 @@ app = Flask(__name__)
 app.secret_key = "astaLaOsoBebe49!"
 
 app.config['dbconfig'] = {'host': '127.0.0.1',
-                          'user': 'vsearch',
+                          'user': 'QQQvsearch',
                           'password': 'quakA!',
                           'database': 'vsearchlogDB', }
 
@@ -39,18 +40,30 @@ def do_search() -> 'html':
            search_4_letters to a mysql database.
         """
         sleep(15)  # line mimicks delay of database
-        with UseDatabase(app.config['dbconfig']) as cursor:
-            # the string representing the sql query
-            sql = """
-                    insert into log
-                    (phrase, letters, ip, browser_string, results)
-                    values
-                    (%s, %s, %s, %s, %s)"""
-            # the values substituted into the query string
-            sql_tuple = (req.form['phrase'], req.form['letters'],
-                         req.remote_addr, req.user_agent.browser, res, )
-            # perform query
-            cursor.execute(sql, sql_tuple)
+        try:
+            with UseDatabase(app.config['dbconfig']) as cursor:
+                # the string representing the sql query
+                sql = """
+                        insert into log
+                        (phrase, letters, ip, browser_string, results)
+                        values
+                        (%s, %s, %s, %s, %s)"""
+                # the values substituted into the query string
+                sql_tuple = (req.form['phrase'], req.form['letters'],
+                             req.remote_addr, req.user_agent.browser, res, )
+                # perform query
+                cursor.execute(sql, sql_tuple)
+        # Exception handling
+        except ConnectionError as err:
+            print('Database switched on? Err: ', str(err))
+        except CredentialsError as err:
+            print('Password and/ or username seem to be incorrect. Err: ',
+                  str(err))
+        except SQLError as err:
+            print('The SQL code has errors. Err: ', str(err))
+        except Exception as err:
+            print('Sth went wrong.', str(err))
+
     title = 'Your search results!'
     phrase = request.form['phrase']
     letters = request.form['letters']
