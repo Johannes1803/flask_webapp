@@ -21,23 +21,30 @@ import mysql.connector
 
 
 class ConnectionError(Exception):
-    pass
+    """Raised if it is not possible to reach the database."""
 
 
 class CredentialsError(Exception):
-    pass
+    """Raised if the database credentials are wrong."""
 
 
 class SQLError(Exception):
-    pass
+    """Raised if the sql query contains errors."""
 
 
 class UseDatabase:
+    """Handle communication between the database MySql and custom python code.
+
+        Implements the context management protocol for use in pythons
+        'with' statement.
+    """
+
     def __init__(self, config: dict):
         """ Add the database config parameters to the object.
 
         On Object creation, pass a dictionary with all relevant
-        information on the connection to MySQL.
+        information on the connection to MySQL and store in attribute
+        configuration.
         Minimum required key-value pairs:
         host -- ip address of host running MySQL
         user -- the MySQL username
@@ -45,11 +52,15 @@ class UseDatabase:
         database -- name of database
         """
         self.configuration = config
+        self.conn = None
+        self.cursor = None
 
     def __enter__(self) -> 'cursor':
         """ Establish connection to mySQL.
 
         On established connection return a cursor object.
+        Raise a ConnectionError if th database cannot be reached.
+        Raise a CredentialsError if username and/or password are wrong.
         """
         try:
             self.conn = mysql.connector.connect(**self.configuration)
@@ -62,7 +73,14 @@ class UseDatabase:
 
     def __exit__(self, exc_type, exc_value, exc_trace) -> 'None':
         """ Tidy up connection after commiting changes.
+
+        Raise an SQLError if the sql query code has errors.
+        Raise a generic Error if an other error occurs.
         """
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
+        if exc_type == mysql.connector.errors.ProgrammingError:
+            raise SQLError(exc_value)
+        if exc_type:
+            raise exc_type(exc_value)

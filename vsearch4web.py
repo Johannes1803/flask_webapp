@@ -1,5 +1,12 @@
-from time import sleep
-from flask import Flask, render_template, request, escape, session
+""" Flask webapp building the backend of a small website.
+
+Allow users to search for letters in a phrase.
+Store requests in a databse and render as human-readable html.
+
+How to invoke:
+    >>>> python vsearch4web.py
+"""
+from flask import Flask, render_template, request, session
 from vsearch import search_4_letters
 from db_cm import UseDatabase, ConnectionError, CredentialsError, SQLError
 from checker import check_logged_in
@@ -9,7 +16,7 @@ app = Flask(__name__)
 app.secret_key = "astaLaOsoBebe49!"
 
 app.config['dbconfig'] = {'host': '127.0.0.1',
-                          'user': 'vsearchQQQ',
+                          'user': 'vsearch',
                           'password': 'quakA!',
                           'database': 'vsearchlogDB', }
 
@@ -35,11 +42,13 @@ def log_request(req: 'flask_request', res: str) -> None:
 
 @app.route('/search4', methods=['POST'])
 def do_search() -> 'html':
-    """Perform search for letters and render results on screen.
+    """Perform search for letters in phrase and render results on screen.
 
-    The user enters letters to look for and the phrase to be searched.
-    Use data from request, compute the result in search_4_results and
-    render results on screen.
+    The user enters a phrase and letters in a form. Extract data from form,
+    call search_4_letters on it to compute the contained letters.
+    Render results.
+    Catch various likely errors and log them in the terminal. Hide scary error
+    messages from user.
     """
     title = 'Your search results!'
     phrase = request.form['phrase']
@@ -47,6 +56,12 @@ def do_search() -> 'html':
     results = str(search_4_letters(phrase, letters))
     try:
         log_request(request, results)
+    except ConnectionError as err:
+        print('Database switched on? Err: ', str(err))
+    except CredentialsError as err:
+        print('Password and/ or username seem to be incorrect. Err: ', str(err))
+    except SQLError as err:
+        print('The SQL code has errors.', str(err))
     except Exception as err:
         print('****** Logging failed with this error: ', str(err))
     rendered = render_template(
@@ -74,7 +89,10 @@ def entry_page() -> 'html':
 @app.route('/viewlog')
 @check_logged_in
 def view_the_log() -> 'html':
-    """Display the request data in a human readable html table."""
+    """Display the request data in a human readable html table.
+    Catch various error messages and log them on the terminal. Hide scary error
+    messages from user.
+    """
     try:
         with UseDatabase(app.config['dbconfig']) as cursor:
             sql = """select phrase, letters, ip, browser_string, results
@@ -96,7 +114,10 @@ def view_the_log() -> 'html':
     except ConnectionError as err:
         print('Database switched on? Err: ', str(err))
     except CredentialsError as err:
-        print('Password and/ or username seem to be incorrect.', str(err))
+        print('Password and/ or username seem to be incorrect. Err: ',
+              str(err))
+    except SQLError as err:
+        print('The SQL code has errors. Err: ', str(err))
     except Exception as err:
         print('Sth went wrong.', str(err))
     return 'Error'
@@ -104,12 +125,14 @@ def view_the_log() -> 'html':
 
 @app.route('/login')
 def do_login() -> str:
+    """Perform user login."""
     session['logged_in'] = True
     return 'You are now logged in.'
 
 
 @app.route('/logout')
 def do_logout() -> str:
+    """Perform user logout."""
     session.pop('logged_in')
     return 'You are now logged out.'
 
