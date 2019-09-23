@@ -58,12 +58,6 @@ def do_search() -> 'html':
     try:
         t = Thread(target=log_request, args=(request, results))
         t.start()
-    except ConnectionError as err:
-        print('Database switched on? Err: ', str(err))
-    except CredentialsError as err:
-        print('Password and/ or username seem to be incorrect. Err: ', str(err))
-    except SQLError as err:
-        print('The SQL code has errors.', str(err))
     except Exception as err:
         print('****** Logging failed with this error: ', str(err))
     rendered = render_template(
