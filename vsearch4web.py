@@ -59,12 +59,12 @@ def do_search() -> 'html':
                 # the string representing the sql query
                 sql = """
                         insert into log
-                        (phrase, letters, ip, browser_string, results)
+                        (phrase, letters, browser_string, results)
                         values
-                        (%s, %s, %s, %s, %s)"""
+                        (%s, %s, %s, %s)"""
                 # the values substituted into the query string
                 sql_tuple = (req.form['phrase'], req.form['letters'],
-                             req.remote_addr, req.user_agent.browser, res, )
+                             req.user_agent.browser, res, )
                 # perform query
                 cursor.execute(sql, sql_tuple)
         # Exception handling
@@ -118,7 +118,7 @@ def view_the_log() -> 'html':
     """
     try:
         with UseDatabase(app.config['dbconfig']) as cursor:
-            sql = """select phrase, letters, ip, browser_string, results
+            sql = """select phrase, letters, browser_string, results
             from log
             """
             # contents is a list of tuples
@@ -127,7 +127,7 @@ def view_the_log() -> 'html':
             # contents_escaped = [[escape(entry) for entry in tuple]
             #                    for tuple in contents]
 
-        titles = ('Phrase', 'Letters', 'Remote_addr', 'User_agent', 'Results')
+        titles = ('Phrase', 'Letters', 'User_agent', 'Results')
         return render_template(
             'viewlog.html',
             the_title='View Log',
