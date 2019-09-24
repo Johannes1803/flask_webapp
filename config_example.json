@@ -1,0 +1,10 @@
+{
+    "mysql":{
+        "host":"localhost",
+        "user":"example_user",
+        "password":"sth_save",
+        "database":"example_db"
+    }, "flask": {
+        "key": "secret_key"
+    }
+}

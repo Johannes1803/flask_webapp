@@ -1,17 +1,30 @@
 {% extends 'base.html' %}
 
 {% block body %}
+<div class="entry">
+    <br>
+    <h2>{{ the_title }}</h2>
+    <div>
+        <p>
+            Search for letters in a phrase of your choice. Letters default to vowels,
+            but can be changed, too.
+        </p>
+        <p> If u enter a search and hit "Submit" your phrase, letters and the browser
+        you used will be stored in a publicly available table. No potentially sensitive
+        information like ip or username will be logged. By hitting "Submit" you agree
+        to these terms.</p>
+    </div>
 
-<h2>{{ the_title }}</h2>
-
-<form method='POST' action='/search4'>
-<table>
-<p>Use this form to submit a search request:</p>
-<tr><td>Phrase:</td><td><input name='phrase' type='TEXT' width='60'></td></tr>
-<tr><td>Letters:</td><td><input name='letters' type='TEXT' value='aeiou'></td></tr>
-</table>
-<p>When you're ready, click this button:</p>
-<p><input value='Do it!' type='SUBMIT'></p>
-</form>
-
+    <form method='POST' action='/search4'>
+      <div class="form-group">
+        <label for="phrase">Phrase:</label>
+        <input type="text" class="form-control" id="phrase" name='phrase'>
+      </div>
+      <div class="form-group">
+        <label for="letters">Letters:</label>
+        <input type="text" class="form-control" id="letters" name='letters' value="aeiou">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
 {% endblock %}

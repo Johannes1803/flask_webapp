@@ -1,17 +1,16 @@
 body {
   font-family:      Verdana, Geneva, Arial, sans-serif;
-  font-size:        medium;
-  background-color: tan;
-  margin-top:       5%;
+  font-size:        12pt;
+  background-color: white;
+  margin-top:       1%;
   margin-bottom:    5%;
   margin-left:      10%;
   margin-right:     10%;
-  border:           1px dotted gray;
   padding:          10px 10px 10px 10px;
 }
 a {
-  text-decoration:  none; 
-  font-weight:      600; 
+  text-decoration:  none;
+  font-weight:      600;
 }
 a:hover {
   text-decoration:  underline;
@@ -21,6 +20,7 @@ a img {
 }
 h2 {
   font-size:        150%;
+  font-weight:      bold;
 }
 table {
   margin-left:      20px;
@@ -41,7 +41,7 @@ td, th {
   font-style:       italic;
 }
 .confirmentry {
-  font-weight:      600; 
+  font-weight:      600;
 }
 
 /*** Tables ***/
@@ -50,7 +50,7 @@ table {
 font-size:          1em;
 background-color:   #fafcff;
 border:             1px solid #909090;
-color:              #2a2a2a;
+color:              black;
 padding:            5px 5px 2px;
 border-collapse:    collapse;
 }
@@ -62,11 +62,33 @@ border:             thin dotted gray;
 /*** Inputs ***/
 input[type=text] {
   font-size:        115%;
-  width:            30em;
+  /***width:            30em;***/
 }
 input[type=submit] {
   font-size:        125%;
 }
 select {
   font-size:        125%;
+}
+
+
+
+/* set a max-width for horizontal fluid layout and make it centered */
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 1600px; /* or 950px */
+}
+
+.navbar {
+    color: white;
+    background: #23B9AC
+}
+
+.nav-link {
+    color: white;
+}
+
+.navbar-brand{
+    color: white
 }

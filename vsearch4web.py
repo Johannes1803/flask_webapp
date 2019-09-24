@@ -106,7 +106,7 @@ def entry_page() -> 'html':
     """
     return render_template(
         'entry.html',
-        the_title='Welcome to search 4 letters on the web!')
+        the_title='Search')
 
 
 @app.route('/viewlog')
@@ -130,7 +130,7 @@ def view_the_log() -> 'html':
         titles = ('Phrase', 'Letters', 'User_agent', 'Results')
         return render_template(
             'viewlog.html',
-            the_title='View Log',
+            the_title='Past Searches',
             the_row_titles=titles,
             the_data=contents)
 
