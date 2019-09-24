@@ -79,7 +79,7 @@ select {
   margin-left: auto;
   max-width: 1600px; /* or 950px */
 }
-
+/*
 .navbar {
     color: white;
     background: #23B9AC
@@ -90,5 +90,15 @@ select {
 }
 
 .navbar-brand{
+    color: white
+}*/
+
+.btn-primary{
+    background: #23B9AC;
+    color: white
+}
+
+.jumbotron{
+    background: #23B9AC;
     color: white
 }

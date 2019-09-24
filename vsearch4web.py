@@ -156,7 +156,8 @@ def do_login() -> str:
 @app.route('/logout')
 def do_logout() -> str:
     """Perform user logout."""
-    session.pop('logged_in')
+    if 'logged_in' in session:
+        session.pop('logged_in')
     return 'You are now logged out.'
 
 
