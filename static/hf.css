@@ -100,5 +100,9 @@ select {
 
 .jumbotron{
     background: #23B9AC;
-    color: white
+    color: white;
+    max-width: 1600px
+}
+.success{
+    color: #23B9AC;
 }

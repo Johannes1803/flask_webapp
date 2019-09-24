@@ -147,18 +147,22 @@ def view_the_log() -> 'html':
 
 
 @app.route('/login')
-def do_login() -> str:
+def do_login() -> 'html':
     """Perform user login."""
     session['logged_in'] = True
-    return 'You are now logged in.'
+    return render_template(
+        'logged_in.html',
+        the_title='Login Succesful',)
 
 
 @app.route('/logout')
-def do_logout() -> str:
+def do_logout() -> 'html':
     """Perform user logout."""
     if 'logged_in' in session:
         session.pop('logged_in')
-    return 'You are now logged out.'
+        return render_template(
+            'logged_out.html',
+            the_title='Logout Succesful',)
 
 
 if __name__ == '__main__':
