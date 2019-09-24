@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="static/hf.css" />
     </head>
     <body>
+        <div class="container">
             <div class="jumbotron" style="margin-bottom:0">
               <h1>Search for letters on the web</h1>
                 <p>
@@ -37,10 +38,33 @@
               </ul>
             </div>
           </nav>
-        <div class="container">
             {% block body %}
 
             {% endblock %}
         </div>
+        <footer id="sticky-footer">
+          <div class="container">
+              <div class="footer">
+                 <div class="row">
+                    <div class="col-sm-6">Author: Johannes Birk</div>
+                    <div class="col-sm-6">Code base provided by
+                        <a href="https://www.oreilly.com/library/view/head-first-python/9781491919521/"
+                        class="footer_link">
+                        &copy; head First Python</a>
+                    </div>
+                 </div>
+                 <div class="row">
+                     <div class="col-sm-6">Contact:
+                         <a href="https://github.com/Johannes1803" class="footer_link">github</a>
+                     </div>
+                     <div class="col-sm-6">
+                        View the source code on
+                        <a href="https://github.com/Johannes1803/flask_webapp" class="footer_link">
+                        github</a>
+                     </div>
+                 </div>
+              </div>
+          </div>
+        </footer>
     </body>
 </html>

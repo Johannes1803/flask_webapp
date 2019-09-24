@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import session
+from flask import session, render_template
 
 
 def check_logged_in(func):
@@ -7,5 +7,7 @@ def check_logged_in(func):
     def wrapper(*args, **kwargs):
         if 'logged_in' in session:
             return func(*args, **kwargs)
-        return 'You are not logged in.'
+        return render_template(
+            'access_denied.html',
+            the_title='Access denied',)
     return wrapper

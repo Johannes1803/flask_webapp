@@ -79,19 +79,6 @@ select {
   margin-left: auto;
   max-width: 1600px; /* or 950px */
 }
-/*
-.navbar {
-    color: white;
-    background: #23B9AC
-}
-
-.nav-link {
-    color: white;
-}
-
-.navbar-brand{
-    color: white
-}*/
 
 .btn-primary{
     background: #23B9AC;
@@ -105,4 +92,16 @@ select {
 }
 .success{
     color: #23B9AC;
+}
+.no_success{
+    color: #A22929;
+}
+.footer{
+    background: #23B9AC;
+    color: white;
+    max-width: 1600px;
+    margin-top: 10px;
+}
+.footer_link{
+    color: black;
 }

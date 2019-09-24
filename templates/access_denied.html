@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div>
+    <br>
+    <h2>{{ the_title }}</h2>
+    <div class="no_success">
+        <p>
+            You need to be logged in for access to the search history.
+        </p>
+    </div>
+    <div>
+        <p> Click <a href="/login">here</a> to login first.</p>
+    </div>
+</div>
+{% endblock %}

@@ -130,7 +130,7 @@ def view_the_log() -> 'html':
         titles = ('Phrase', 'Letters', 'User_agent', 'Results')
         return render_template(
             'viewlog.html',
-            the_title='Past Searches',
+            the_title='Search history',
             the_row_titles=titles,
             the_data=contents)
 
@@ -160,9 +160,9 @@ def do_logout() -> 'html':
     """Perform user logout."""
     if 'logged_in' in session:
         session.pop('logged_in')
-        return render_template(
-            'logged_out.html',
-            the_title='Logout Succesful',)
+    return render_template(
+        'logged_out.html',
+        the_title='Logout Succesful',)
 
 
 if __name__ == '__main__':
