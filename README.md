@@ -7,10 +7,15 @@
 * use sessions to store whether a user is logged in and should be granted access to the table of requests.
 
 ## Included technologies:
-* python backend
+### python backend
 * flask
 * jinja2
+### frontend
 * html & css
+* bootstrap
 
 ## future improvements:
 * Currently, the "login" is as simple as visiting /login. In the future, replace with requiring user-id and password. 
+
+## Acknowledgement
+* Code base provided by [Head First Python](https://www.oreilly.com/library/view/head-first-python/9781491919521/)
