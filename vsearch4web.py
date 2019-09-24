@@ -8,20 +8,34 @@ How to invoke:
 """
 from time import sleep
 from threading import Thread
+import json
 from flask import Flask, render_template, request, session
 from flask import copy_current_request_context
 from vsearch import search_4_letters
 from db_cm import UseDatabase, ConnectionError, CredentialsError, SQLError
 from checker import check_logged_in
 
+PATH_CONFIG = 'config.json'
+
+
+def load_config(config_path: str) -> dict:
+    """Load the config.json file as a dictionary.
+
+    Contains relevant credentials for mysql and flask.
+    """
+    try:
+        with open(config_path) as json_data_file:
+            data = json.load(json_data_file)
+        return data
+    except Exception as err:
+        print('Sth went wrong.Err: ', str(err))
+
 
 app = Flask(__name__)
-app.secret_key = "astaLaOsoBebe49!"
 
-app.config['dbconfig'] = {'host': '127.0.0.1',
-                          'user': 'QQQvsearch',
-                          'password': 'quakA!',
-                          'database': 'vsearchlogDB', }
+config_dict = load_config(PATH_CONFIG)
+app.secret_key = config_dict['flask']['key']
+app.config['dbconfig'] = config_dict['mysql']
 
 
 @app.route('/search4', methods=['POST'])
@@ -39,7 +53,7 @@ def do_search() -> 'html':
         """Write the request and the results returned by
            search_4_letters to a mysql database.
         """
-        sleep(15)  # line mimicks delay of database
+        #  sleep(15)  # line mimicks delay of database
         try:
             with UseDatabase(app.config['dbconfig']) as cursor:
                 # the string representing the sql query

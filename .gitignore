@@ -8,3 +8,4 @@ try_examples4.py
 myfile.txt
 hello_flask.py
 test_use_database.py
+config.json
