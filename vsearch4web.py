@@ -9,6 +9,7 @@ How to invoke:
 from time import sleep
 from threading import Thread
 import json
+import os
 from flask import Flask, render_template, request, session
 from flask import copy_current_request_context
 from vsearch import search_4_letters
@@ -28,6 +29,7 @@ def load_config(config_path: str) -> dict:
             data = json.load(json_data_file)
         return data
     except Exception as err:
+        print(os.getcwd())
         print('Sth went wrong.Err: ', str(err))
 
 
@@ -166,4 +168,5 @@ def do_logout() -> 'html':
 
 
 if __name__ == '__main__':
+    PATH_CONFIG = 'config.json'
     app.run(debug=True)
